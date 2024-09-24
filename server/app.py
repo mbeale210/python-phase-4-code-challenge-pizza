@@ -19,6 +19,31 @@ db.init_app(app)
 
 api = Api(app)
 
+class Restaurants(Resource):
+    def get(self):
+        restaurants = [restaurant.to_dict(only=('id', 'name', 'address')) for restaurant in Restaurant.query.all()]
+        return make_response(restaurants, 200)
+    
+class RestaurantById(Resource):
+    def get(self, id):
+        restaurant = Restaurant.query.get(id)
+        if restaurant:
+            return make_response(restaurant.to_dict(), 200)
+        else:
+            return make_response({"error": "Restaurant not found"}, 404)
+
+    def delete(self, id):
+        restaurant = Restaurant.query.get(id)
+        if restaurant:
+            db.session.delete(restaurant)
+            db.session.commit()
+            return make_response('', 204)
+        else:
+            return make_response({"error": "Restaurant not found"}, 404)
+
+api.add_resource(Restaurants, '/restaurants')
+api.add_resource(RestaurantById, '/restaurants/<int:id>')
+
 
 @app.route("/")
 def index():
