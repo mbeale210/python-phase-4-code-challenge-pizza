@@ -23,7 +23,7 @@ class Restaurants(Resource):
     def get(self):
         restaurants = [restaurant.to_dict(only=('id', 'name', 'address')) for restaurant in Restaurant.query.all()]
         return make_response(restaurants, 200)
-    
+
 class RestaurantById(Resource):
     def get(self, id):
         restaurant = Restaurant.query.get(id)
@@ -41,12 +41,11 @@ class RestaurantById(Resource):
         else:
             return make_response({"error": "Restaurant not found"}, 404)
 
-
 class Pizzas(Resource):
     def get(self):
         pizzas = [pizza.to_dict(only=('id', 'name', 'ingredients')) for pizza in Pizza.query.all()]
         return make_response(pizzas, 200)
-    
+
 class RestaurantPizzas(Resource):
     def post(self):
         data = request.get_json()
@@ -69,7 +68,7 @@ api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 
 @app.route("/")
 def index():
-    return "<h1>Code challenge</h1>"
+    return "<h1>Pizza Restaurant API</h1>"
 
 
 if __name__ == "__main__":
