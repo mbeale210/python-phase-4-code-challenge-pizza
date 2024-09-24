@@ -41,9 +41,31 @@ class RestaurantById(Resource):
         else:
             return make_response({"error": "Restaurant not found"}, 404)
 
+
+class Pizzas(Resource):
+    def get(self):
+        pizzas = [pizza.to_dict(only=('id', 'name', 'ingredients')) for pizza in Pizza.query.all()]
+        return make_response(pizzas, 200)
+    
+class RestaurantPizzas(Resource):
+    def post(self):
+        data = request.get_json()
+        try:
+            new_restaurant_pizza = RestaurantPizza(
+                price=data['price'],
+                pizza_id=data['pizza_id'],
+                restaurant_id=data['restaurant_id']
+            )
+            db.session.add(new_restaurant_pizza)
+            db.session.commit()
+            return make_response(new_restaurant_pizza.to_dict(), 201)
+        except ValueError:
+            return make_response({"errors": ["validation errors"]}, 400)
+
 api.add_resource(Restaurants, '/restaurants')
 api.add_resource(RestaurantById, '/restaurants/<int:id>')
-
+api.add_resource(Pizzas, '/pizzas')
+api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 
 @app.route("/")
 def index():
