@@ -26,14 +26,14 @@ class Restaurants(Resource):
 
 class RestaurantById(Resource):
     def get(self, id):
-        restaurant = Restaurant.query.get(id)
+        restaurant = db.session.get(Restaurant, id)
         if restaurant:
             return make_response(restaurant.to_dict(), 200)
         else:
             return make_response({"error": "Restaurant not found"}, 404)
 
     def delete(self, id):
-        restaurant = Restaurant.query.get(id)
+        restaurant = db.session.get(Restaurant, id)
         if restaurant:
             db.session.delete(restaurant)
             db.session.commit()
@@ -69,7 +69,6 @@ api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 @app.route("/")
 def index():
     return "<h1>Pizza Restaurant API</h1>"
-
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
